@@ -72,4 +72,80 @@ local BondsLabel = Instance.new("TextLabel")
 BondsLabel.Parent = LogoFrame
 BondsLabel.BackgroundTransparency = 1
 BondsLabel.Size = UDim2.new(1, 0, 0.23, 0)
-Bonds
+BondsLabel.Position = UDim2.new(0, 0, 0.7, 10)
+BondsLabel.Text = "Bonds: ..."
+BondsLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+BondsLabel.Font = Enum.Font.Gotham
+BondsLabel.TextScaled = true
+BondsLabel.ZIndex = 11
+
+task.spawn(function()
+    local success, err = pcall(function()
+        local player = players.LocalPlayer
+        local bondDisplayGui = player.PlayerGui:WaitForChild("BondDisplay", 10)
+        local bondInfoFrame = bondDisplayGui:WaitForChild("BondInfo", 10)
+        local sourceBondCountLabel = bondInfoFrame:WaitForChild("BondCount", 10)
+        
+        local function updateBondsDisplay()
+            BondsLabel.Text = "Bonds: " .. sourceBondCountLabel.Text
+        end
+        
+        updateBondsDisplay()
+        sourceBondCountLabel:GetPropertyChangedSignal("Text"):Connect(updateBondsDisplay)
+    end)
+
+    if not success then
+        if placeId == 70876832253163 or placeId == 98018823628597 then
+            BondsLabel.Text = "Bonds: In Game"
+        else
+            BondsLabel.Text = "Bonds: Error"
+        end
+    end
+end)
+
+if placeId == 70876832253163 or placeId == 98018823628597 then
+    
+    task.spawn(function()
+        pcall(function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/vuthaison1308/vuthaison1308/refs/heads/main/DR.lua"))()
+        end)
+    end)
+
+    task.spawn(function()
+        local playerToTeleport = players.LocalPlayer
+        local targetPlaceId = 116495829188952
+        task.wait(TimeHop)
+        pcall(function()
+            teleportService:Teleport(targetPlaceId, playerToTeleport)
+        end)
+    end)
+
+elseif placeId == 116495829188952 then
+
+    local localPlayer = players.LocalPlayer
+    local character = localPlayer.Character or localPlayer.CharacterAdded:Wait()
+    local rootPart = character:WaitForChild("HumanoidRootPart")
+
+    task.spawn(function()
+        local coordinates = {
+            Vector3.new(38, 7, 100), Vector3.new(38, 7, 115),
+            Vector3.new(38, 7, 130), Vector3.new(38, 7, 145)
+        }
+        while true do
+            for _, pos in ipairs(coordinates) do
+                if rootPart then rootPart.CFrame = CFrame.new(pos) end
+                task.wait(1.5)
+            end
+        end
+    end)
+
+    task.spawn(function()
+        local createPartyEvent = replicatedStorage:WaitForChild("Shared"):WaitForChild("Network"):WaitForChild("RemoteEvent"):WaitForChild("CreateParty")
+        local args = {{isPrivate = true, maxMembers = 1, trainId = "default", gameMode = "Normal"}}
+        while true do
+            createPartyEvent:FireServer(unpack(args))
+            task.wait(0.5)
+        end
+    end)
+    
+end
