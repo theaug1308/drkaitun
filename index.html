@@ -30,14 +30,14 @@ end
 local LogoFrame = Instance.new("Frame")
 LogoFrame.Parent = ScreenGui
 LogoFrame.BackgroundTransparency = 1
-LogoFrame.Size = UDim2.new(0, 600, 0, 140)
-LogoFrame.Position = UDim2.new(0.5, -300, 0.5, -70)
+LogoFrame.Size = UDim2.new(0, 600, 0, 180) -- Tăng chiều cao để chứa bond display
+LogoFrame.Position = UDim2.new(0.5, -300, 0.5, -90) -- Điều chỉnh position
 LogoFrame.ZIndex = 10
 
 local MainTitle = Instance.new("TextLabel")
 MainTitle.Parent = LogoFrame
 MainTitle.BackgroundTransparency = 1
-MainTitle.Size = UDim2.new(1, 0, 0.6, 0)
+MainTitle.Size = UDim2.new(1, 0, 0.45, 0) -- Điều chỉnh size
 MainTitle.Position = UDim2.new(0, 0, 0, 0)
 MainTitle.Text = "theaug hub"
 MainTitle.TextColor3 = Color3.fromRGB(0, 255, 255)
@@ -50,13 +50,27 @@ MainTitle.ZIndex = 11
 local SubTitle = Instance.new("TextLabel")
 SubTitle.Parent = LogoFrame
 SubTitle.BackgroundTransparency = 1
-SubTitle.Size = UDim2.new(1, 0, 0.4, 0)
-SubTitle.Position = UDim2.new(0, 0, 0.6, 0)
+SubTitle.Size = UDim2.new(1, 0, 0.3, 0) -- Điều chỉnh size
+SubTitle.Position = UDim2.new(0, 0, 0.45, 0) -- Điều chỉnh position
 SubTitle.Text = "Dead Rails"
 SubTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
 SubTitle.TextScaled = true
 SubTitle.Font = Enum.Font.Gotham
 SubTitle.ZIndex = 11
+
+-- Thêm Bond Display
+local BondDisplay = Instance.new("TextLabel")
+BondDisplay.Parent = LogoFrame
+BondDisplay.BackgroundTransparency = 1
+BondDisplay.Size = UDim2.new(1, 0, 0.25, 0)
+BondDisplay.Position = UDim2.new(0, 0, 0.75, 0)
+BondDisplay.Text = "Bonds: Loading..."
+BondDisplay.TextColor3 = Color3.fromRGB(255, 215, 0) -- Màu vàng để nổi bật
+BondDisplay.TextScaled = true
+BondDisplay.Font = Enum.Font.GothamBold
+BondDisplay.TextStrokeTransparency = 0
+BondDisplay.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+BondDisplay.ZIndex = 11
 
 local BondsFrame = Instance.new("Frame")
 BondsFrame.Parent = ScreenGui
@@ -92,6 +106,17 @@ BondsInfo.TextXAlignment = Enum.TextXAlignment.Left
 BondsInfo.TextYAlignment = Enum.TextYAlignment.Top
 BondsInfo.TextWrapped = true
 BondsInfo.ZIndex = 11
+
+-- Function để cập nhật bond count
+spawn(function()
+    while true do
+        pcall(function()
+            local bondCount = game:GetService("Players")["312saddasd122"].PlayerGui.BondDisplay.BondInfo.BondCount.Value
+            BondDisplay.Text = "Bonds: " .. tostring(bondCount)
+        end)
+        wait(0.5) -- Cập nhật mỗi 0.5 giây
+    end
+end)
 
 spawn(function()
     wait(1)
