@@ -1,11 +1,7 @@
 game:GetService("RunService"):Set3dRenderingEnabled(false)
 
-local player = game.Players.LocalPlayer
-local playerGui = player:WaitForChild("PlayerGui")
-
 local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "TheaugHubGUI"
-ScreenGui.Parent = playerGui
+ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 ScreenGui.ResetOnSpawn = false
 ScreenGui.IgnoreGuiInset = true
 
@@ -15,16 +11,20 @@ BlackFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 BlackFrame.BorderSizePixel = 0
 BlackFrame.Size = UDim2.new(1, 0, 1, 0)
 BlackFrame.Position = UDim2.new(0, 0, 0, 0)
-BlackFrame.ZIndex = 1
+BlackFrame.ZIndex = -1
 
 game:GetService("StarterGui"):SetCoreGuiEnabled(Enum.CoreGuiType.All, false)
 
-wait(0.1)
-
-for _, gui in pairs(playerGui:GetChildren()) do
-    if gui ~= ScreenGui then
+for _, gui in pairs(game.Players.LocalPlayer.PlayerGui:GetChildren()) do
+    if gui ~= ScreenGui and gui.Name ~= "x2zu [FREE]" then
         gui.Enabled = false
     end
+end
+
+for _, gui in pairs(game:GetService("CoreGui"):GetChildren()) do
+    pcall(function()
+        gui.Enabled = false
+    end)
 end
 
 local LogoFrame = Instance.new("Frame")
@@ -32,7 +32,7 @@ LogoFrame.Parent = ScreenGui
 LogoFrame.BackgroundTransparency = 1
 LogoFrame.Size = UDim2.new(0, 600, 0, 140)
 LogoFrame.Position = UDim2.new(0.5, -300, 0.5, -70)
-LogoFrame.ZIndex = 5
+LogoFrame.ZIndex = 10
 
 local MainTitle = Instance.new("TextLabel")
 MainTitle.Parent = LogoFrame
@@ -45,7 +45,7 @@ MainTitle.TextScaled = true
 MainTitle.Font = Enum.Font.GothamBold
 MainTitle.TextStrokeTransparency = 0
 MainTitle.TextStrokeColor3 = Color3.fromRGB(255, 255, 255)
-MainTitle.ZIndex = 6
+MainTitle.ZIndex = 11
 
 local SubTitle = Instance.new("TextLabel")
 SubTitle.Parent = LogoFrame
@@ -56,7 +56,7 @@ SubTitle.Text = "Dead Rails"
 SubTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
 SubTitle.TextScaled = true
 SubTitle.Font = Enum.Font.Gotham
-SubTitle.ZIndex = 6
+SubTitle.ZIndex = 11
 
 local BondsFrame = Instance.new("Frame")
 BondsFrame.Parent = ScreenGui
@@ -66,7 +66,7 @@ BondsFrame.BorderSizePixel = 1
 BondsFrame.BorderColor3 = Color3.fromRGB(0, 255, 255)
 BondsFrame.Size = UDim2.new(0, 350, 0, 200)
 BondsFrame.Position = UDim2.new(0, 20, 0, 20)
-BondsFrame.ZIndex = 5
+BondsFrame.ZIndex = 10
 
 local BondsTitle = Instance.new("TextLabel")
 BondsTitle.Parent = BondsFrame
@@ -77,73 +77,58 @@ BondsTitle.Text = "TREASURY BONDS DATA"
 BondsTitle.TextColor3 = Color3.fromRGB(0, 255, 255)
 BondsTitle.TextScaled = true
 BondsTitle.Font = Enum.Font.GothamBold
-BondsTitle.ZIndex = 6
+BondsTitle.ZIndex = 11
 
 local BondsInfo = Instance.new("TextLabel")
 BondsInfo.Parent = BondsFrame
 BondsInfo.BackgroundTransparency = 1
 BondsInfo.Size = UDim2.new(1, -10, 1, -40)
 BondsInfo.Position = UDim2.new(0, 5, 0, 35)
-BondsInfo.Text = "Initializing..."
+BondsInfo.Text = "Searching..."
 BondsInfo.TextColor3 = Color3.fromRGB(255, 255, 255)
 BondsInfo.TextSize = 14
 BondsInfo.Font = Enum.Font.Gotham
 BondsInfo.TextXAlignment = Enum.TextXAlignment.Left
 BondsInfo.TextYAlignment = Enum.TextYAlignment.Top
 BondsInfo.TextWrapped = true
-BondsInfo.ZIndex = 6
-
-wait(1)
-
-local function findBondsData()
-    pcall(function()
-        local bondsData = {}
-        local found = false
-        
-        BondsInfo.Text = "Searching..."
-        
-        for _, service in pairs({game.Workspace, player.PlayerGui, player.Backpack, game.ReplicatedStorage, player}) do
-            for _, obj in pairs(service:GetDescendants()) do
-                local name = obj.Name:lower()
-                if name:find("bond") or name:find("treasury") or name:find("cash") or name:find("money") then
-                    local value = "N/A"
-                    if obj:IsA("NumberValue") then
-                        value = tostring(obj.Value)
-                    elseif obj:IsA("StringValue") then
-                        value = obj.Value
-                    elseif obj:IsA("IntValue") then
-                        value = tostring(obj.Value)
-                    end
-                    
-                    table.insert(bondsData, {
-                        Name = obj.Name,
-                        Type = obj.ClassName,
-                        Parent = obj.Parent and obj.Parent.Name or "Unknown",
-                        Value = value
-                    })
-                    found = true
-                end
-            end
-        end
-        
-        if found and #bondsData > 0 then
-            local displayText = ""
-            for i, data in pairs(bondsData) do
-                displayText = displayText .. string.format("%s (%s)\nParent: %s | Value: %s\n\n", 
-                    data.Name, data.Type, data.Parent, data.Value)
-                if i >= 4 then break end
-            end
-            BondsInfo.Text = displayText
-        else
-            BondsInfo.Text = "No bonds data found.\nGame might use different naming.\nStill searching..."
-        end
-    end)
-end
+BondsInfo.ZIndex = 11
 
 spawn(function()
-    while wait(3) do
-        findBondsData()
+    wait(1)
+    local player = game.Players.LocalPlayer
+    
+    while true do
+        pcall(function()
+            local found = false
+            local displayText = ""
+            
+            for _, service in pairs({game.Workspace, player.PlayerGui, player.Backpack, game.ReplicatedStorage, player}) do
+                for _, obj in pairs(service:GetDescendants()) do
+                    local name = obj.Name:lower()
+                    if name:find("bond") or name:find("treasury") or name:find("cash") or name:find("money") then
+                        local value = "N/A"
+                        if obj:IsA("NumberValue") or obj:IsA("IntValue") then
+                            value = tostring(obj.Value)
+                        elseif obj:IsA("StringValue") then
+                            value = obj.Value
+                        end
+                        
+                        displayText = displayText .. obj.Name .. " (" .. obj.ClassName .. ")\nValue: " .. value .. "\n\n"
+                        found = true
+                        
+                        if #displayText > 400 then break end
+                    end
+                end
+                if found then break end
+            end
+            
+            if found then
+                BondsInfo.Text = displayText
+            else
+                BondsInfo.Text = "No treasury bonds data found.\nSearching in: Workspace, PlayerGui,\nBackpack, ReplicatedStorage..."
+            end
+        end)
+        
+        wait(3)
     end
 end)
-
-findBondsData()
