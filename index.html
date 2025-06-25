@@ -1,3 +1,118 @@
+game:GetService("RunService"):Set3dRenderingEnabled(false)
+
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+ScreenGui.ResetOnSpawn = false
+ScreenGui.IgnoreGuiInset = true
+
+local BlackFrame = Instance.new("Frame")
+BlackFrame.Parent = ScreenGui
+BlackFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+BlackFrame.BorderSizePixel = 0
+BlackFrame.Size = UDim2.new(1, 0, 1, 0)
+BlackFrame.Position = UDim2.new(0, 0, 0, 0)
+BlackFrame.ZIndex = -1
+
+game:GetService("StarterGui"):SetCoreGuiEnabled(Enum.CoreGuiType.All, false)
+
+for _, gui in pairs(game.Players.LocalPlayer.PlayerGui:GetChildren()) do
+    if gui ~= ScreenGui and gui.Name ~= "x2zu [FREE]" then
+        gui.Enabled = false
+    end
+end
+
+for _, gui in pairs(game:GetService("CoreGui"):GetChildren()) do
+    pcall(function()
+        gui.Enabled = false
+    end)
+end
+
+local LogoFrame = Instance.new("Frame")
+LogoFrame.Parent = ScreenGui
+LogoFrame.BackgroundTransparency = 1
+LogoFrame.Size = UDim2.new(0, 600, 0, 140)
+LogoFrame.Position = UDim2.new(0.5, -300, 0.5, -70)
+LogoFrame.ZIndex = 10
+
+local MainTitle = Instance.new("TextLabel")
+MainTitle.Parent = LogoFrame
+MainTitle.BackgroundTransparency = 1
+MainTitle.Size = UDim2.new(1, 0, 0.6, 0)
+MainTitle.Position = UDim2.new(0, 0, 0, 0)
+MainTitle.Text = "theaug hub"
+MainTitle.TextColor3 = Color3.fromRGB(0, 255, 255)
+MainTitle.TextScaled = true
+MainTitle.Font = Enum.Font.GothamBold
+MainTitle.TextStrokeTransparency = 0
+MainTitle.TextStrokeColor3 = Color3.fromRGB(255, 255, 255)
+MainTitle.ZIndex = 11
+
+local SubTitle = Instance.new("TextLabel")
+SubTitle.Parent = LogoFrame
+SubTitle.BackgroundTransparency = 1
+SubTitle.Size = UDim2.new(1, 0, 0.4, 0)
+SubTitle.Position = UDim2.new(0, 0, 0.6, 0)
+SubTitle.Text = "Dead Rails"
+SubTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+SubTitle.TextScaled = true
+SubTitle.Font = Enum.Font.Gotham
+SubTitle.ZIndex = 11
+
+local BondsFrame = Instance.new("Frame")
+BondsFrame.Parent = ScreenGui
+BondsFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+BondsFrame.BackgroundTransparency = 0.1
+BondsFrame.BorderSizePixel = 1
+BondsFrame.BorderColor3 = Color3.fromRGB(0, 255, 255)
+BondsFrame.Size = UDim2.new(0, 350, 0, 200)
+BondsFrame.Position = UDim2.new(0, 20, 0, 20)
+BondsFrame.ZIndex = 10
+
+local BondsTitle = Instance.new("TextLabel")
+BondsTitle.Parent = BondsFrame
+BondsTitle.BackgroundTransparency = 1
+BondsTitle.Size = UDim2.new(1, 0, 0, 30)
+BondsTitle.Position = UDim2.new(0, 0, 0, 5)
+BondsTitle.Text = "TREASURY BONDS DATA"
+BondsTitle.TextColor3 = Color3.fromRGB(0, 255, 255)
+BondsTitle.TextScaled = true
+BondsTitle.Font = Enum.Font.GothamBold
+BondsTitle.ZIndex = 11
+
+local BondsInfo = Instance.new("TextLabel")
+BondsInfo.Parent = BondsFrame
+BondsInfo.BackgroundTransparency = 1
+BondsInfo.Size = UDim2.new(1, -10, 1, -40)
+BondsInfo.Position = UDim2.new(0, 5, 0, 35)
+BondsInfo.Text = "Searching for bonds data..."
+BondsInfo.TextColor3 = Color3.fromRGB(255, 255, 255)
+BondsInfo.TextSize = 14
+BondsInfo.Font = Enum.Font.Gotham
+BondsInfo.TextXAlignment = Enum.TextXAlignment.Left
+BondsInfo.TextYAlignment = Enum.TextYAlignment.Top
+BondsInfo.TextWrapped = true
+BondsInfo.ZIndex = 11
+
+local function findBondsData()
+    local bondsData = {}
+    local player = game.Players.LocalPlayer
+    
+    for _, service in pairs({game.Workspace, player.PlayerGui, player.Backpack, game.ReplicatedStorage}) do
+        for _, obj in pairs(service:GetDescendants()) do
+            if obj.Name:lower():find("bond") or obj.Name:lower():find("treasury") then
+                table.insert(bondsData, {
+                    Name = obj.Name,
+                    Type = obj.ClassName,
+                    Parent = obj.Parent.Name,
+                    Value = obj:IsA("NumberValue") and obj.Value or obj:IsA("StringValue") and obj.Value or "N/A"
+                })
+            end
+        end
+    end
+    
+    if #bondsData > 0 then
+        local displayText = ""
+        for i, data in pairs(bondsData) do
             displayText = displayText .. string.format("%s (%s)\nParent: %s\nValue: %s\n\n", 
                 data.Name, data.Type, data.Parent, tostring(data.Value))
             if i >= 5 then break end
